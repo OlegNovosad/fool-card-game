@@ -1,0 +1,46 @@
+.background {
+  background: 
+  url("./assets/images/table/dark_wooden_table_1.jpg") 
+    no-repeat 
+    center 
+    center 
+    fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.opponent {
+  height: 30vh;
+  border: 3px solid red;
+}
+
+.table {
+  height: 40vh;
+  border: 3px solid blue;
+}
+
+.me {
+  height: 30vh;
+  border: 3px solid green;
+}
+
+.card {
+  width: 10%;
+  margin: 8px;
+  border: 3px solid pink;
+}
