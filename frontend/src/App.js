@@ -20,10 +20,12 @@ function App() {
 
     socket.on("game-state-changed", (message) => {
       console.log(message);
-      const playerCards = JSON.parse(message["player_cards"]);
-      const table = JSON.parse(message["table"]);
+      const playerCards = message["players"][0]["cards"];
+      const opponentCards = message["players"][1]["cards"];
+      const table = message["table"];
       setPlayerCards(playerCards);
       setTableCards(table);
+      setOpponentCards(opponentCards);
     });
   })
 
@@ -41,7 +43,7 @@ function App() {
             opponentCards.map((card) => {
               let suit = card["suit"];
               let rank = card["rank"];
-              
+
               return <img key={suit + rank} className="card" src={require("./assets/images/cards/default/SHKURA.png")} alt="card" />
             })
           }

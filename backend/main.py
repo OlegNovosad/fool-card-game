@@ -11,12 +11,12 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 controller = GameController()
 
 def send_game_state():
-    player_cards = json.dumps(controller.players[0].cards, default=lambda o: o.__dict__)
+    players = json.dumps(controller.players, default=lambda o: o.__dict__)
     table = json.dumps(controller.table, default=lambda o: o.__dict__)
     
     emit("game-state-changed", {
-        "player_cards": player_cards,
-        "table": table
+        "players": json.loads(players),
+        "table": json.loads(table)
     })
 
 @app.route("/")
