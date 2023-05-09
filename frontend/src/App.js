@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import io from 'socket.io-client';
+import Card from './Card';
 
 const socket = io("http://localhost:5000");
 
@@ -40,79 +41,18 @@ function App() {
     <div className="background container">
         <div className="opponent row">
           {
-            opponentCards.map((card) => {
-              let suit = card["suit"];
-              let rank = card["rank"];
-
-              return <img key={suit + rank} className="card" src={require("./assets/images/cards/default/SHKURA.png")} alt="card" />
-            })
+            opponentCards.map((card) => <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />)
           }
         </div>
         <div className="table row">
           {
-              tableCards.map((card) => {
-                let imgName = "";
-                let suit = card["suit"];
-                let rank = card["rank"];
-
-                if (suit == "diamonds") {
-                  suit = "DZVUNA";
-                } else if (suit == "clubs") {
-                  suit = "KRESTA";
-                } else if (suit == "spades") {
-                  suit = "PIKA";
-                } else if (suit == "hearts") {
-                  suit = "SERCE";
-                }
-
-                if (rank == 11) {
-                  rank = "VALET";
-                } else if (rank == 12) {
-                  rank = "DAMA";
-                } else if (rank == 13) {
-                  rank = "KOROL";
-                } else if (rank == 14) {
-                  rank = "TUZ";
-                }
-                imgName += suit;
-                imgName += rank;
-                imgName += ".png";
-                return <img key={suit + rank} className="card" src={require("./assets/images/cards/default/" + imgName)} alt="card" />
-              })
-            }
+            tableCards.map((card) => <Card key={card["suit"] + card["rank"]} card={card} />)
+          }
         </div>
         <div className="me row">
-            {
-              playerCards.map((card) => {
-                let imgName = "";
-                let suit = card["suit"];
-                let rank = card["rank"];
-
-                if (suit == "diamonds") {
-                  suit = "DZVUNA";
-                } else if (suit == "clubs") {
-                  suit = "KRESTA";
-                } else if (suit == "spades") {
-                  suit = "PIKA";
-                } else if (suit == "hearts") {
-                  suit = "SERCE";
-                }
-
-                if (rank == 11) {
-                  rank = "VALET";
-                } else if (rank == 12) {
-                  rank = "DAMA";
-                } else if (rank == 13) {
-                  rank = "KOROL";
-                } else if (rank == 14) {
-                  rank = "TUZ";
-                }
-                imgName += suit;
-                imgName += rank;
-                imgName += ".png";
-                return <img key={suit + rank} onClick={() => playCard(card)} className="card" src={require("./assets/images/cards/default/" + imgName)} alt="card" />
-              })
-            }
+          {
+            playerCards.map((card) => <Card key={card["suit"] + card["rank"]} card={card} onSelect={() => playCard(card)} />)
+          }
         </div>
     </div>
   );
