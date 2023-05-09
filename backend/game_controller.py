@@ -48,9 +48,9 @@ class GameController():
             # Шукаємо найменший козир серед усіх гравців
             current_min = list(min_main_suits.values())[0]
             self.current_player = list(min_main_suits.keys())[0]
-            for player, min in min_main_suits.items():
-                if min < current_min:
-                    current_min = min
+            for player, player_min in min_main_suits.items():
+                if player_min < current_min:
+                    current_min = player_min
                     self.current_player = player
 
             current_min_str = rank_to_str(current_min)
@@ -79,10 +79,13 @@ class GameController():
 
     def play_card(self, card: Card):
         if len(self.table) == 0:
-            self.current_player.cards.pop(selected_card_index - 1)
+            for i, c in enumerate(self.current_player.cards):
+                if c.rank == card.rank and c.suit == card.suit:
+                    del self.current_player.cards[i]
+                    break
             
             # Походити
-            self.table.append(selected_card)
+            self.table.append(card)
 
             # TODO: Добавити розумніший вибір наступного гравця
             self.current_player = self.players[1]

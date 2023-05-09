@@ -5,8 +5,8 @@ import io from 'socket.io-client';
 const socket = io("http://localhost:5000");
 
 function App() {
-  const [playerCards, setPlayerCards] = useState([{"suit": "spades", "rank": 14}, {"suit": "diamonds", "rank": 2}, {"suit": "hearts", "rank": 13}, {"suit": "hearts", "rank": 8}, {"suit": "diamonds", "rank": 11}, {"suit": "diamonds", "rank": 5}])
-  const [opponentCards, setOpponentCards] = useState([{"suit": "diamonds", "rank": 13}, {"suit": "hearts", "rank": 11}, {"suit": "spades", "rank": 8}, {"suit": "diamonds", "rank": 2}, {"suit": "hearts", "rank": 6}, {"suit": "diamonds", "rank": 12}])
+  const [playerCards, setPlayerCards] = useState([]);
+  const [opponentCards, setOpponentCards] = useState([]);
   const [tableCards, setTableCards] = useState([]);
 
   useEffect(() => {
@@ -18,16 +18,19 @@ function App() {
       console.log(message);
     });
 
-    socket.on("game-started", (message) => {
-      const data = JSON.parse(message["player_cards"]);
-      console.log(data);
-      setPlayerCards(data);
+    socket.on("game-state-changed", (message) => {
+      console.log(message);
+      const playerCards = JSON.parse(message["player_cards"]);
+      const table = JSON.parse(message["table"]);
+      setPlayerCards(playerCards);
+      setTableCards(table);
     });
   })
 
   const playCard = (card) => {
     socket.emit("play-card", {
-      card: card
+      suit: card["suit"],
+      rank: card["rank"]
     });
   }
 
@@ -36,7 +39,10 @@ function App() {
         <div className="opponent row">
           {
             opponentCards.map((card) => {
-              return <img className="card" src={require("./assets/images/cards/default/SHKURA.png")} alt="card" />
+              let suit = card["suit"];
+              let rank = card["rank"];
+              
+              return <img key={suit + rank} className="card" src={require("./assets/images/cards/default/SHKURA.png")} alt="card" />
             })
           }
         </div>
@@ -69,7 +75,7 @@ function App() {
                 imgName += suit;
                 imgName += rank;
                 imgName += ".png";
-                return <img className="card" src={require("./assets/images/cards/default/" + imgName)} alt="card" />
+                return <img key={suit + rank} className="card" src={require("./assets/images/cards/default/" + imgName)} alt="card" />
               })
             }
         </div>
@@ -102,7 +108,7 @@ function App() {
                 imgName += suit;
                 imgName += rank;
                 imgName += ".png";
-                return <img onClick={() => playCard(card)} className="card" src={require("./assets/images/cards/default/" + imgName)} alt="card" />
+                return <img key={suit + rank} onClick={() => playCard(card)} className="card" src={require("./assets/images/cards/default/" + imgName)} alt="card" />
               })
             }
         </div>
