@@ -9,6 +9,9 @@ function App() {
   const [playerCards, setPlayerCards] = useState([]);
   const [opponentCards, setOpponentCards] = useState([]);
   const [tableCards, setTableCards] = useState([]);
+  const [discardPile, setDiscardPile] = useState([]);
+  const [deck, setDeck] = useState({});
+  const [trumpCard, setTrumpCard] = useState({});
 
   useEffect(() => {
     socket.on("connected", (_) => {
@@ -30,9 +33,15 @@ function App() {
       const playerCards = message["players"][0]["cards"];
       const opponentCards = message["players"][1]["cards"];
       const table = message["table"];
+      const discardPile = message["discard_pile"];
+      const deck = message["deck"];
+      const trumpCard = message["trump_card"];
       setPlayerCards(playerCards);
       setTableCards(table);
       setOpponentCards(opponentCards);
+      setDiscardPile(discardPile);
+      setDeck(deck);
+      setTrumpCard(trumpCard);
     });
   })
 
@@ -51,9 +60,17 @@ function App() {
           }
         </div>
         <div className="table row">
-          {
-            tableCards.map((card) => <Card key={card["suit"] + card["rank"]} card={card} />)
-          }
+          <div className="discard-pile">
+
+          </div>
+          <div className="table-cards">
+            {
+              tableCards.map((card) => <Card key={card["suit"] + card["rank"]} card={card} />)
+            }
+          </div>
+          <div className="deck">
+            <Card key={trumpCard["suit"] + trumpCard["rank"]} card={trumpCard} />
+          </div>
         </div>
         <div className="me row">
           {

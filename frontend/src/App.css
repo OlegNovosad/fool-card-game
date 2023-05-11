@@ -39,6 +39,24 @@
   border: 3px solid green;
 }
 
+.discard-pile {
+  height: 100%;
+  width: 20%;
+  border: 3px solid purple;
+}
+
+.table-cards {
+  height: 100%;
+  width: 60%;
+  border: 3px solid purple;
+}
+
+.deck {
+  height: 100%;
+  width: 20%;
+  border: 3px solid purple;
+}
+
 .card {
   width: 10%;
   margin: 8px;
