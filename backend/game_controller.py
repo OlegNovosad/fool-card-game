@@ -8,11 +8,22 @@ MAX_INITIAL_CARDS = 6
 
 class GameController():
     def __init__(self):
+        # Колода
         self.deck = Deck()
+
+        # Список гравців
         self.players: list[Player] = [Player("Oleg"), Player("Bob", is_bot=True)]
+        
+        # Стіл має поточні карти під час ходу
         self.table: list[Card] = []
+
+        # Відбій карт
         self.discard_pile: list[Card] = []
+
+        # Козир (карта)
         self.main_suit = None
+
+        # Поточний гравець
         self.current_player: Player = None
 
     def deal_cards(self):
@@ -123,61 +134,59 @@ class GameController():
                     print("Select other card")
 
 
-    def other(self):
-        # Стіл має поточні карти під час ходу
-        table: list[Card] = []
-        # Відбій карт
-        discard_pile: list[Card] = []
+    def play_bot_card(self):
+        print("Bots turn")
+        print(f"Bots cards {self.current_player.cards}")
 
+        if len(self.table) > 0:
+            card_beaten = False
+            for index, card in enumerate(self.current_player.cards):
+                if card.can_beat(self.table[0], self.main_suit):
+                    print(f"Bot beats with {card}")
+
+                    # Побити карту
+                    card_beaten = True
+                    self.table.append(card)
+                    del self.current_player.cards[index]
+
+                    # Викинути карти у відбій
+                    self.discard_pile.extend(self.table)
+                    self.table.clear()
+                    break
+            
+            if not card_beaten:
+                # Зняти карти
+                self.current_player.cards.extend(self.table)
+                
+                # Очистити стіл від карт
+                self.table.clear()
+
+                # TODO: Добавити розумніший вибір наступного гравця
+                self.current_player = self.players[0]
+            return
+
+        # Вибираємо випадкову карту
+        selected_card_index = random.randint(0, len(self.current_player.cards) - 1)
+        selected_card = self.current_player.cards.pop(selected_card_index)
+        print("Bot selected", selected_card)
+
+        self.table.append(selected_card)
+
+        # TODO: Добавити розумніший вибір наступного гравця
+        self.current_player = self.players[0]
+
+    def other(self):
         # Початок гри
         while not self.is_game_over(self.players, self.deck):
             # Взяти бракуючу кількість карт з колоди для кожного гравця
             for player in self.players:
                 self.take_cards(player, self.deck)
             
-            print("Current table:", table)
-            if current_player.is_bot:
-                print("Bots turn")
-                print(f"Bots cards {current_player.cards}")
-
-                if len(table) > 0:
-                    card_beaten = False
-                    for index, card in enumerate(current_player.cards):
-                        if card.can_beat(table[0], self.main_suit):
-                            print(f"Bot beats with {card}")
-
-                            # Побити карту
-                            card_beaten = True
-                            table.append(card)
-                            del current_player.cards[index]
-
-                            # Викинути карти у відбій
-                            discard_pile.extend(table)
-                            table.clear()
-                            break
-                    
-                    if not card_beaten:
-                        # Зняти карти
-                        current_player.cards.extend(table)
-                        
-                        # Очистити стіл від карт
-                        table.clear()
-
-                        # TODO: Добавити розумніший вибір наступного гравця
-                        current_player = self.players[0]
-                        continue
-
-                # Вибираємо випадкову карту
-                selected_card_index = random.randint(0, len(current_player.cards) - 1)
-                selected_card = current_player.cards.pop(selected_card_index)
-                print("Bot selected", selected_card)
-
-                table.append(selected_card)
-
-                # TODO: Добавити розумніший вибір наступного гравця
-                current_player = self.players[0]
+            print("Current table:", self.table)
+            if self.current_player.is_bot:
+                self.play_bot_card()
             else:
-                self.play_card(card)
+                self.play_card(None)
         print("GAME OVER!")
         for player in self.players:
             if len(player.cards) > 0:
