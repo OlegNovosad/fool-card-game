@@ -11,12 +11,18 @@ function App() {
   const [tableCards, setTableCards] = useState([]);
 
   useEffect(() => {
-    socket.on("connected", (message) => {
-      console.log(message);
+    socket.on("connected", (_) => {
+      socket.emit("auth", {
+        "connected": true,
+        "name": "Oleg"
+      });
     });
 
-    socket.on("disconnected", (message) => {
-      console.log(message);
+    socket.on("disconnected", (_) => {
+      socket.emit("auth", {
+        "connected": false,
+        "name": "Oleg"
+      });
     });
 
     socket.on("game-state-changed", (message) => {

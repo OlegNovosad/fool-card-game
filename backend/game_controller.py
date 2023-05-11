@@ -12,7 +12,7 @@ class GameController():
         self.deck = Deck()
 
         # Список гравців
-        self.players: list[Player] = [Player("Oleg"), Player("Bob", is_bot=True)]
+        self.players: list[Player] = [Player("Bob", is_bot=True)]
         
         # Стіл має поточні карти під час ходу
         self.table: list[Card] = []
@@ -21,7 +21,7 @@ class GameController():
         self.discard_pile: list[Card] = []
 
         # Козир (карта)
-        self.main_suit = None
+        self.trump_card = None
 
         # Поточний гравець
         self.current_player: Player = None
@@ -36,14 +36,14 @@ class GameController():
                 player.cards = cards
 
         # Визначаємо козир
-        self.main_suit = self.deck.cards[len(self.deck.cards) - 1].suit
+        self.trump_card = self.deck.cards[len(self.deck.cards) - 1]
 
         # Шукаємо найменший козир кожного гравця
         min_main_suits = {}
         for player in self.players:
             main_suits_cards = []
             for card in player.cards:
-                if card.suit == self.main_suit:
+                if card.suit == self.trump_card.suit:
                     main_suits_cards.append(card.rank)
 
             if len(main_suits_cards) > 0:
@@ -65,7 +65,7 @@ class GameController():
                     self.current_player = player
 
             current_min_str = rank_to_str(current_min)
-            print(f"{self.current_player}, {current_min_str} of {self.main_suit}")
+            print(f"{self.current_player}, {current_min_str} of {self.trump_card.suit}")
 
     def is_game_over(self, players: list[Player], deck: Deck):
         game_over = True
@@ -121,7 +121,7 @@ class GameController():
                 selected_card = self.current_player.cards[selected_card_index - 1]
                 print("Ви вибрали", selected_card)
 
-                if selected_card.can_beat(self.table[0], self.main_suit):
+                if selected_card.can_beat(self.table[0], self.trump_card.suit):
                     # Побити карту
                     card_beaten = True
                     card = self.current_player.cards.pop(selected_card_index - 1)
@@ -141,7 +141,7 @@ class GameController():
         if len(self.table) > 0:
             card_beaten = False
             for index, card in enumerate(self.current_player.cards):
-                if card.can_beat(self.table[0], self.main_suit):
+                if card.can_beat(self.table[0], self.trump_card.suit):
                     print(f"Bot beats with {card}")
 
                     # Побити карту

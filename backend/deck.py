@@ -2,9 +2,8 @@ from card import Card, suits
 import random
 
 class Deck:
-    cards: list[Card] = []
-
     def __init__(self):
+        self.cards: list[Card] = []
         self.__generatedeck__()
         random.shuffle(self.cards)
 
