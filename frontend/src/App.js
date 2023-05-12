@@ -10,8 +10,8 @@ function App() {
   const [opponentCards, setOpponentCards] = useState([]);
   const [tableCards, setTableCards] = useState([]);
   const [discardPile, setDiscardPile] = useState([]);
-  const [deck, setDeck] = useState({});
-  const [trumpCard, setTrumpCard] = useState({});
+  const [deck, setDeck] = useState({cards: []});
+  const [trumpCard, setTrumpCard] = useState();
 
   useEffect(() => {
     socket.on("connected", (_) => {
@@ -69,7 +69,11 @@ function App() {
             }
           </div>
           <div className="deck">
-            <Card key={trumpCard["suit"] + trumpCard["rank"]} card={trumpCard} />
+            <Card card={trumpCard} />
+
+            {
+              deck["cards"].map((card) =>  <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />)
+            }
           </div>
         </div>
         <div className="me row">

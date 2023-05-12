@@ -1,4 +1,8 @@
 export default function Card(props) {
+    if (!props || !props.card) {
+        return;
+    }
+
     let imgName = "";
     let suit = props.card["suit"];
     let rank = props.card["rank"];
