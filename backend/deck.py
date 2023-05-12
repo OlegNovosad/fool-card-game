@@ -9,6 +9,6 @@ class Deck:
 
     def __generatedeck__(self):
         for suit in suits:
-            for rank in range(2, 15):
+            for rank in range(6, 15):
                 card = Card(suit, rank)
                 self.cards.append(card)

@@ -88,6 +88,11 @@ class GameController():
             card = deck.cards.pop()
             player.cards.append(card)
 
+    def replenish_cards(self):
+        # Взяти бракуючу кількість карт з колоди для кожного гравця
+        for player in self.players:
+            self.take_cards(player, self.deck)
+
     def play_card(self, card: Card):
         if len(self.table) == 0:
             for i, c in enumerate(self.current_player.cards):
@@ -178,10 +183,6 @@ class GameController():
     def other(self):
         # Початок гри
         while not self.is_game_over(self.players, self.deck):
-            # Взяти бракуючу кількість карт з колоди для кожного гравця
-            for player in self.players:
-                self.take_cards(player, self.deck)
-            
             print("Current table:", self.table)
             if self.current_player.is_bot:
                 self.play_bot_card()

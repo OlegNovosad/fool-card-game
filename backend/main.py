@@ -68,8 +68,11 @@ def on_play_card(data):
     
     # TODO: Перемикання гравця
     # Хід бота
-    # controller.play_bot_card()
-    # send_game_state()
+    controller.play_bot_card()
+    send_game_state()
+
+    controller.replenish_cards()
+    send_game_state()
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app)

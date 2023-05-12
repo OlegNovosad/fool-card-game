@@ -40,6 +40,7 @@
 }
 
 .discard-pile {
+  position: relative;
   height: 100%;
   width: 20%;
   border: 3px solid purple;
@@ -52,6 +53,7 @@
 }
 
 .deck {
+  position: relative;
   height: 100%;
   width: 20%;
   border: 3px solid purple;
@@ -60,5 +62,4 @@
 .card {
   width: 10vw;
   margin: 8px;
-  border: 3px solid pink;
 }

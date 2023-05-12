@@ -61,7 +61,23 @@ function App() {
         </div>
         <div className="table row">
           <div className="discard-pile">
-
+            {
+              discardPile.map((card) => {
+                const angle = Math.floor(Math.random() * 360);
+                const left = Math.floor(Math.random() * 50);
+                const top = Math.floor(Math.random() * 50);
+                return (
+                  <div style={{
+                    position: "absolute",
+                    top: top,
+                    left: left,
+                    transform: `rotate(${angle}deg)`
+                  }}>
+                    <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />
+                  </div>
+                )
+              })
+            }
           </div>
           <div className="table-cards">
             {
@@ -69,10 +85,26 @@ function App() {
             }
           </div>
           <div className="deck">
-            <Card card={trumpCard} />
-
+            <div style={{
+              transform: "rotate(90deg)",
+              position: "absolute",
+              left: -64,
+            }}>
+              <Card card={trumpCard} />
+            </div>
             {
-              deck["cards"].map((card) =>  <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />)
+              deck["cards"].map((card, index) => {
+                const offset = index * 1;
+                return (
+                  <div style={{
+                    position: "absolute",
+                    left: offset,
+                    top: offset
+                  }}>
+                    <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />
+                  </div>
+                )
+              })
             }
           </div>
         </div>
