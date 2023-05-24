@@ -59,6 +59,10 @@
   border: 3px solid purple;
 }
 
+.card-pair {
+  position: relative;
+}
+
 .card {
   width: 10vw;
   margin: 8px;

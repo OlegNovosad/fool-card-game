@@ -1,8 +1,8 @@
 from deck import Deck
 from card import Card, rank_to_str
 from player import Player
+from card_pair import CardPair
 import random
-import json
 
 MAX_INITIAL_CARDS = 6
 
@@ -15,7 +15,7 @@ class GameController():
         self.players: list[Player] = [Player("Bob", is_bot=True)]
         
         # Стіл має поточні карти під час ходу
-        self.table: list[Card] = []
+        self.table: list[CardPair] = []
 
         # Відбій карт
         self.discard_pile: list[Card] = []
@@ -101,7 +101,7 @@ class GameController():
                     break
             
             # Походити
-            self.table.append(card)
+            self.table.append(CardPair(played_card=card))
 
             # TODO: Добавити розумніший вибір наступного гравця
             self.current_player = self.players[1]
@@ -113,6 +113,7 @@ class GameController():
                 selection = input("Виберіть карту або напишіть T, щоб зняти карти: ")
                 if selection == "T":
                     # Зняти карти
+                    # TODO: Розпакувати карти перед зняттям (played, beaten)
                     self.current_player.cards.extend(self.table)
 
                     # Очистити стіл від карт
@@ -126,10 +127,11 @@ class GameController():
                 selected_card = self.current_player.cards[selected_card_index - 1]
                 print("Ви вибрали", selected_card)
 
-                if selected_card.can_beat(self.table[0], self.trump_card.suit):
+                if selected_card.can_beat(self.table[0].played_card, self.trump_card.suit):
                     # Побити карту
                     card_beaten = True
                     card = self.current_player.cards.pop(selected_card_index - 1)
+                    # TODO: Знайти карту, яку хочемо побити
                     self.table.append(card)
 
                     # Викинути карти у відбій
@@ -146,21 +148,23 @@ class GameController():
         if len(self.table) > 0:
             card_beaten = False
             for index, card in enumerate(self.current_player.cards):
-                if card.can_beat(self.table[0], self.trump_card.suit):
+                if card.can_beat(self.table[0].played_card, self.trump_card.suit):
                     print(f"Bot beats with {card}")
 
                     # Побити карту
                     card_beaten = True
-                    self.table.append(card)
+                    # TODO: Знайти карту, яку хочемо побити
+                    self.table[0].beaten_card = card
                     del self.current_player.cards[index]
 
                     # Викинути карти у відбій
-                    self.discard_pile.extend(self.table)
-                    self.table.clear()
+                    # self.discard_pile.extend(self.table)
+                    # self.table.clear()
                     break
             
             if not card_beaten:
                 # Зняти карти
+                # TODO: Розпакувати карти перед зняттям (played, beaten)
                 self.current_player.cards.extend(self.table)
                 
                 # Очистити стіл від карт
@@ -175,7 +179,7 @@ class GameController():
         selected_card = self.current_player.cards.pop(selected_card_index)
         print("Bot selected", selected_card)
 
-        self.table.append(selected_card)
+        self.table.append(CardPair(played_card=selected_card))
 
         # TODO: Добавити розумніший вибір наступного гравця
         self.current_player = self.players[0]

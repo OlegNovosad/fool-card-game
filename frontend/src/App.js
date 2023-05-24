@@ -62,8 +62,7 @@ function App() {
         <div className="table row">
           <div className="discard-pile">
             {
-              discardPile.map((card) => {
-                const angle = Math.floor(Math.random() * 360);
+              discardPile.map((card) => {                const angle = Math.floor(Math.random() * 360);
                 const left = Math.floor(Math.random() * 50);
                 const top = Math.floor(Math.random() * 50);
                 return (
@@ -81,7 +80,31 @@ function App() {
           </div>
           <div className="table-cards">
             {
-              tableCards.map((card) => <Card key={card["suit"] + card["rank"]} card={card} />)
+              tableCards.map((cardPair) => {
+                const played_card = cardPair["played_card"];
+                const beaten_card = cardPair["beaten_card"];
+
+                return (
+                  <div className="card-pair">
+                    <div style={{
+                      position: "absolute"
+                    }}>
+                      <Card key={played_card["suit"] + played_card["rank"]} card={played_card} />
+                    </div>
+                    {
+                      beaten_card
+                      ? <div style={{
+                        position: "absolute",
+                        top: 32,
+                        left: 32
+                      }}>
+                          <Card key={beaten_card["suit"] + beaten_card["rank"]} card={beaten_card} />
+                        </div>
+                      : <></>
+                    }
+                  </div>
+                )
+              })
             }
           </div>
           <div className="deck">

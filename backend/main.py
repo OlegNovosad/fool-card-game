@@ -52,6 +52,11 @@ def on_auth(data):
         controller.players.append(Player(name))
 
         controller.deal_cards()
+
+        if controller.current_player.is_bot:
+            # Хід бота
+            controller.play_bot_card()
+
         send_game_state()
     elif connected == False and name in sessions:
         sessions.remove(name)
