@@ -53,7 +53,6 @@
 }
 
 .deck {
-  position: relative;
   height: 80%;
   width: 100%;
   border: 3px solid purple;
@@ -66,4 +65,17 @@
 .card {
   width: 10vw;
   margin: 8px;
+}
+
+.deck-size {
+  background-color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 33%;
+  left: 33%;
 }

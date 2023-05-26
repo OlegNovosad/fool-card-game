@@ -3,9 +3,8 @@ import './App.css';
 import io from 'socket.io-client';
 import Card from './Card';
 
-const socket = io("http://localhost:5000");
-
 function App() {
+  const [socket, setSocket] = useState();
   const [playerCards, setPlayerCards] = useState([]);
   const [opponentCards, setOpponentCards] = useState([]);
   const [tableCards, setTableCards] = useState([]);
@@ -14,6 +13,8 @@ function App() {
   const [trumpCard, setTrumpCard] = useState();
 
   useEffect(() => {
+    const socket = io("http://localhost:5000");
+    
     socket.on("connected", (_) => {
       socket.emit("auth", {
         "connected": true,
@@ -51,7 +52,9 @@ function App() {
     socket.on("incorrect-card", (message) => {
       alert("Виберіть іншу карту");
     });
-  })
+
+    setSocket(socket);
+  }, [])
 
   const playCard = (card) => {
     socket.emit("play-card", {
@@ -116,6 +119,7 @@ function App() {
             }
           </div>
           <div style={{
+            position: "relative",
             height: "100%",
             width: "20%"
           }}>
@@ -127,20 +131,29 @@ function App() {
               }}>
                 <Card card={trumpCard} />
               </div>
-              {
-                deck["cards"].map((card, index) => {
-                  const offset = index * 1;
-                  return (
-                    <div style={{
-                      position: "absolute",
-                      left: offset,
-                      top: offset
-                    }}>
-                      <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />
-                    </div>
-                  )
-                })
-              }
+              <div style={{
+                
+              }}>
+                {
+                  deck["cards"].map((card, index) => {
+                    const offset = index * 1;
+                    return (
+                      <div style={{
+                        position: "absolute",
+                        left: offset,
+                        top: offset
+                      }}>
+                        <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />
+                      </div>
+                    )
+                  })
+                }
+              </div>
+              <div className="deck-size">
+                {
+                  deck.cards.length
+                }
+              </div>
             </div>
             <button onClick={() => socket.emit("end-turn")}>Завершити хід</button>
           </div>
