@@ -13,6 +13,9 @@ class GameController():
 
         # Список гравців
         self.players: list[Player] = [Player("Bob", is_bot=True)]
+
+        # Список гравців, які вже ходили
+        self.already_played_players: list[Player] = []
         
         # Стіл має поточні карти під час ходу
         self.table: list[CardPair] = []
@@ -93,7 +96,7 @@ class GameController():
         for player in self.players:
             self.take_cards(player, self.deck)
 
-    def play_card(self, card: Card):
+    def play_card(self, card: Card) -> bool:
         if len(self.table) == 0:
             for i, c in enumerate(self.current_player.cards):
                 if c.rank == card.rank and c.suit == card.suit:
@@ -102,43 +105,35 @@ class GameController():
             
             # Походити
             self.table.append(CardPair(played_card=card))
-
-            # TODO: Добавити розумніший вибір наступного гравця
-            self.current_player = self.players[1]
         else:
-            print(f"[T]: Зняти карти")
-            card_beaten = False
-            while not card_beaten:
-                # Вибір карти
-                selection = input("Виберіть карту або напишіть T, щоб зняти карти: ")
-                if selection == "T":
-                    # Зняти карти
-                    # TODO: Розпакувати карти перед зняттям (played, beaten)
-                    self.current_player.cards.extend(self.table)
+            # Вибір карти
+            # selection = input("Виберіть карту або напишіть T, щоб зняти карти: ")
+            # if selection == "T":
+            #     # Зняти карти
+            #     # TODO: Розпакувати карти перед зняттям (played, beaten)
+            #     self.current_player.cards.extend(self.table)
 
-                    # Очистити стіл від карт
-                    self.table.clear()
+            #     # Очистити стіл від карт
+            #     self.table.clear()
 
-                    # TODO: Добавити розумніший вибір наступного гравця
-                    self.current_player = self.players[1]
-                    break
-                
-                selected_card_index = int(selection)
-                selected_card = self.current_player.cards[selected_card_index - 1]
-                print("Ви вибрали", selected_card)
+            #     self.switch_player()
+            #     break
 
-                if selected_card.can_beat(self.table[0].played_card, self.trump_card.suit):
-                    # Побити карту
-                    card_beaten = True
-                    card = self.current_player.cards.pop(selected_card_index - 1)
-                    # TODO: Знайти карту, яку хочемо побити
-                    self.table.append(card)
+            if card.can_beat(self.table[0].played_card, self.trump_card.suit):
+                # Побити карту
+                for i, c in enumerate(self.current_player.cards):
+                    if c.rank == card.rank and c.suit == card.suit:
+                        del self.current_player.cards[i]
+                        break
 
-                    # Викинути карти у відбій
-                    self.discard_pile.extend(self.table)
-                    self.table.clear()
-                else:
-                    print("Select other card")
+                self.table.append(card)
+
+                # Викинути карти у відбій
+                self.discard_pile.extend(self.table)
+                self.table.clear()
+            else:
+                return False
+        return True
 
 
     def play_bot_card(self):
@@ -170,8 +165,7 @@ class GameController():
                 # Очистити стіл від карт
                 self.table.clear()
 
-                # TODO: Добавити розумніший вибір наступного гравця
-                self.current_player = self.players[0]
+                self.switch_player()
             return
 
         # Вибираємо випадкову карту
@@ -181,8 +175,19 @@ class GameController():
 
         self.table.append(CardPair(played_card=selected_card))
 
-        # TODO: Добавити розумніший вибір наступного гравця
-        self.current_player = self.players[0]
+        self.switch_player()
+
+    def switch_player(self):
+        self.already_played_players.append(self.current_player)
+
+        if len(self.already_played_players) == len(self.players):
+            self.already_played_players.clear()
+            self.current_player = self.players[0]
+        else:
+            for player in self.players:
+                if any(p.name != player.name for p in self.already_played_players):
+                    self.current_player = player
+                    break
 
     def other(self):
         # Початок гри

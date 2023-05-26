@@ -54,8 +54,8 @@
 
 .deck {
   position: relative;
-  height: 100%;
-  width: 20%;
+  height: 80%;
+  width: 100%;
   border: 3px solid purple;
 }
 

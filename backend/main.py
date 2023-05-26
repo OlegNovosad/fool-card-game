@@ -64,20 +64,29 @@ def on_auth(data):
     else:
         send_game_state()
 
+@socketio.on("end-turn")
+def on_end_turn(data):
+    controller.switch_player()
+    send_game_state()
+
 @socketio.on("play-card")
 def on_play_card(data):
     # Хід гравця
     card = Card(**data)
-    controller.play_card(card)
-    send_game_state()
-    
-    # TODO: Перемикання гравця
-    # Хід бота
-    controller.play_bot_card()
-    send_game_state()
+    success = controller.play_card(card)
 
-    controller.replenish_cards()
-    send_game_state()
+    if success:
+        send_game_state()
+        
+        # TODO: Перемикання гравця
+        # Хід бота
+        controller.play_bot_card()
+        send_game_state()
+
+        controller.replenish_cards()
+        send_game_state()
+    else:
+        emit("incorrect-card")
 
 if __name__ == "__main__":
     socketio.run(app)

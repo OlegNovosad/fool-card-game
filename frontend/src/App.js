@@ -30,18 +30,26 @@ function App() {
 
     socket.on("game-state-changed", (message) => {
       console.log(message);
-      const playerCards = message["players"][0]["cards"];
-      const opponentCards = message["players"][1]["cards"];
+      const players = message["players"];
+      for (let player of players) {
+        if (player["name"] == "Oleg") {
+          setPlayerCards(player["cards"]);
+        } else {
+          setOpponentCards(player["cards"]);
+        }
+      }
       const table = message["table"];
       const discardPile = message["discard_pile"];
       const deck = message["deck"];
       const trumpCard = message["trump_card"];
-      setPlayerCards(playerCards);
       setTableCards(table);
-      setOpponentCards(opponentCards);
       setDiscardPile(discardPile);
       setDeck(deck);
       setTrumpCard(trumpCard);
+    });
+
+    socket.on("incorrect-card", (message) => {
+      alert("Виберіть іншу карту");
     });
   })
 
@@ -107,28 +115,34 @@ function App() {
               })
             }
           </div>
-          <div className="deck">
-            <div style={{
-              transform: "rotate(90deg)",
-              position: "absolute",
-              left: -64,
-            }}>
-              <Card card={trumpCard} />
+          <div style={{
+            height: "100%",
+            width: "20%"
+          }}>
+            <div className="deck">
+              <div style={{
+                transform: "rotate(90deg)",
+                position: "absolute",
+                left: -64,
+              }}>
+                <Card card={trumpCard} />
+              </div>
+              {
+                deck["cards"].map((card, index) => {
+                  const offset = index * 1;
+                  return (
+                    <div style={{
+                      position: "absolute",
+                      left: offset,
+                      top: offset
+                    }}>
+                      <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />
+                    </div>
+                  )
+                })
+              }
             </div>
-            {
-              deck["cards"].map((card, index) => {
-                const offset = index * 1;
-                return (
-                  <div style={{
-                    position: "absolute",
-                    left: offset,
-                    top: offset
-                  }}>
-                    <Card key={card["suit"] + card["rank"]} card={card} hidden={true} />
-                  </div>
-                )
-              })
-            }
+            <button onClick={() => socket.emit("end-turn")}>Завершити хід</button>
           </div>
         </div>
         <div className="me row">
